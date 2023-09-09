@@ -5,7 +5,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/xackery/yakuku/charcreate"
 	"github.com/xackery/yakuku/rule"
+)
+
+var (
+	// Version is the current version of yakuku
+	Version = "0.0.1"
 )
 
 func main() {
@@ -18,6 +24,7 @@ func main() {
 }
 
 func run() error {
+	fmt.Println("Yakuku v" + Version)
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: yakuku [yaml|sql|inject]")
 		os.Exit(1)
@@ -97,6 +104,11 @@ func sql(args []string) error {
 		err = rule.Sql(path)
 		if err != nil {
 			return fmt.Errorf("rule: %w", err)
+		}
+	case "charcreate":
+		err = charcreate.Sql(path)
+		if err != nil {
+			return fmt.Errorf("charcreate: %w", err)
 		}
 	default:
 		fmt.Println("Unknown command:", cmd)
