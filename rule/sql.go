@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Sql(path string) error {
+func Sql(srcYaml, dstSql string) error {
 	start := time.Now()
 	fmt.Printf("Rule...")
 	var err error
@@ -21,13 +21,13 @@ func Sql(path string) error {
 			os.Exit(1)
 		}
 	}()
-	err = sqlGenerate(path)
+	err = sqlGenerate(srcYaml, dstSql)
 	return nil
 }
 
-func sqlGenerate(path string) error {
+func sqlGenerate(srcYaml, dstSql string) error {
 
-	r, err := os.Open("rule.yaml")
+	r, err := os.Open(srcYaml)
 	if err != nil {
 		return err
 	}
@@ -45,15 +45,15 @@ func sqlGenerate(path string) error {
 		return fmt.Errorf("rule sanitize: %w", err)
 	}
 
-	err = generateRuleSQL(rule)
+	err = generateRuleSQL(rule, dstSql)
 	if err != nil {
 		return fmt.Errorf("generateRuleSQL: %w", err)
 	}
 	return nil
 }
 
-func generateRuleSQL(sp *RuleYaml) error {
-	w, err := os.Create("rule.sql")
+func generateRuleSQL(sp *RuleYaml, dstSql string) error {
+	w, err := os.Create(dstSql)
 	if err != nil {
 		return err
 	}
@@ -62,6 +62,5 @@ func generateRuleSQL(sp *RuleYaml) error {
 	for _, rule := range sp.Rules {
 		w.WriteString(fmt.Sprintf("UPDATE `rule_values` SET rule_value = '%s' WHERE rule_name = '%s';\n", rule.Value, rule.Name))
 	}
-
 	return nil
 }

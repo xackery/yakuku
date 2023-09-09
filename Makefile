@@ -6,7 +6,7 @@ VERSION ?= 0.0.1
 run:
 	make build
 	mkdir -p bin/out
-	cd bin && ./${NAME} yaml rule out
+	cd bin && ./${NAME} sql rule rule.yaml out/rule.sql
 # compilies the project to bin/
 build:
 	mkdir -p bin

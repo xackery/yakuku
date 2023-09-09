@@ -90,23 +90,24 @@ func yaml(args []string) error {
 
 func sql(args []string) error {
 	var err error
-	if len(args) < 2 {
-		fmt.Println("Usage: yakuku sql [rule|spell|aa|task|charcreate|all] [yml_path] [out_path]")
+	if len(args) < 3 {
+		fmt.Println("Usage: yakuku sql [rule|charcreate] [src.yaml] [dst.sql]")
 		fmt.Println("This command will generate sql based on the yaml dump")
 		os.Exit(1)
 	}
 
 	cmd := strings.ToLower(args[0])
-	path := args[1]
+	srcYaml := args[1]
+	dstSql := args[2]
 
 	switch cmd {
 	case "rule":
-		err = rule.Sql(path)
+		err = rule.Sql(srcYaml, dstSql)
 		if err != nil {
 			return fmt.Errorf("rule: %w", err)
 		}
 	case "charcreate":
-		err = charcreate.Sql(path)
+		err = charcreate.Sql(srcYaml, dstSql)
 		if err != nil {
 			return fmt.Errorf("charcreate: %w", err)
 		}

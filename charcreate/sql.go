@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Sql(path string) error {
+func Sql(srcYaml, dstSql string) error {
 	start := time.Now()
 	fmt.Printf("CharCreate...")
 	var err error
@@ -25,13 +25,13 @@ func Sql(path string) error {
 			os.Exit(1)
 		}
 	}()
-	err = sqlGenerate()
+	err = sqlGenerate(srcYaml, dstSql)
 	return nil
 }
 
-func sqlGenerate() error {
+func sqlGenerate(srcYaml, dstSql string) error {
 	charCreate := &CharCreateYaml{}
-	r, err := os.Open("charcreate.yaml")
+	r, err := os.Open(srcYaml)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func sqlGenerate() error {
 		return fmt.Errorf("charCreate sanitize: %w", err)
 	}
 
-	err = generateCharCreateSQL(charCreate)
+	err = generateCharCreateSQL(charCreate, dstSql)
 	if err != nil {
 		return fmt.Errorf("generateCharCreateSQL: %w", err)
 	}
@@ -56,8 +56,8 @@ func sqlGenerate() error {
 	return nil
 }
 
-func generateCharCreateSQL(sp *CharCreateYaml) error {
-	w, err := os.Create("charcreate.sql")
+func generateCharCreateSQL(sp *CharCreateYaml, dstSql string) error {
+	w, err := os.Create(dstSql)
 	if err != nil {
 		return err
 	}
