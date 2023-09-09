@@ -1,0 +1,46 @@
+npcs:
+- id: 1000278 # based on 671 a_jester_of_bristlebane
+  name: clockwork_crafter
+  level: 1
+  race: 88
+  class: 1
+  bodytype: 1
+  hp: 100
+  gender: 1
+  size: 3
+  hp_regen_rate: 2
+  maxdmg: 4
+  attack_count: -1
+  npcspecialattks: ABH
+  special_abilities:
+    string: 19,1^20,1^24,1
+    valid: true
+  luclin_hairstyle: 1
+  luclin_haircolor: 1
+  luclin_eyecolor: 1
+  luclin_eyecolor2: 1
+  luclin_beardcolor: 1
+  ammo_idfile: IT10
+  prim_melee_type: 28
+  sec_melee_type: 28
+  ranged_type: 7
+  runspeed: 1.25
+  PhR: 10
+  AC: 24
+  attack_delay: 30
+  STR: 24
+  STA: 24
+  DEX: 24
+  AGI: 24
+  _INT: 24
+  WIS: 24
+  CHA: 24
+  trackable: 1
+  exclude: 1
+  scalerate: 100
+  spellscale: 100
+  healscale: 100
+  show_name: 1
+  flymode: -1
+  exp_mod: 100
+  keeps_sold_items: 1

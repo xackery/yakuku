@@ -1,0 +1,256 @@
+rules:
+  - name: World:ExpansionSettings
+    value: "3"
+    ruleset_id: 1
+    notes: Sets the expansion settings for the server, This is sent on login to world
+      and affects client expansion settings. Defaults to all expansions enabled up to
+      TSS, value is bitmask
+  - name: Expansion:CurrentExpansion
+    value: "2"
+    ruleset_id: 1
+    notes: The current expansion enabled for the server [-1 = ALL, 0 = Classic, 1 =
+      Kunark etc.]
+  - name: World:UseClientBasedExpansionSettings
+    value: "false"
+    ruleset_id: 1
+    notes: If true it will overrule World, ExpansionSettings and set someone's expansion
+      based on the client they're using
+  - name: Character:FoodLossPerUpdate
+    value: "64" # originally 32
+    ruleset_id: 1
+    notes: How much food/water you lose per stamina update
+  - name: Aggro:PetAttackRange
+    value: "200" # was 40000
+    ruleset_id: 1
+    notes: Maximum squared range /pet attack works at default is 200
+  - name: NPC:OOCRegen
+    value: "3" # was 1
+    ruleset_id: 1
+    notes: Enable out-of-combat regeneration for NPC
+  - name: Character:RestRegenEnabled
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Setting to activate out-of-combat regeneration
+  - name: Character:SharedBankPlat
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Shared bank platinum. Off by default to prevent duplication
+  - name: Character:UseRaceClassExpBonuses
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Setting this to true will enable Class and Racial experience rate bonuses
+  - name: Character:UseOldRaceExpPenalties
+    value: "false" # was false
+    ruleset_id: 1
+    notes: Setting this to true will enable racial experience penalties for Iksar, Troll,
+      Ogre, and Barbarian, as well as the bonus for Halflings
+  - name: Character:UseOldClassExpPenalties
+    value: "false" # was false
+    ruleset_id: 1
+    notes: Setting this to true will enable old class experience penalties for Paladin,
+      SK, Ranger, Bard, Monk, Wizard, Enchanter, Magician, and Necromancer, as well
+      as the bonus for Rogues and Warriors
+  - name: Chat:EnableVoiceMacros
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Enable voice macros
+  - name: Combat:ClassicNPCBackstab
+    value: "true" # was false
+    ruleset_id: 1
+    notes: True disables NPC facestab - NPC get normal attack if not behind
+  - name: Combat:FleeHPRatio
+    value: "0" # was 21
+    ruleset_id: 1
+    notes: HP percentage when a NPC begins to flee
+  - name: Combat:MeleePush
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Enable melee push
+  - name: Combat:MeleePushChance
+    value: "0" # was 50
+    ruleset_id: 1
+    notes: NPC chance the target will be pushed. Made up, 100 actually isn't that bad
+  - name: Items:DisableAttuneable
+    value: "true" # was false
+    ruleset_id: 1
+    notes: Enable this to disable Attuneable Items
+  - name: Mail:EnableMailSystem
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Setting whether the mail system is activated. If false, client won't bring
+      up the Mail window
+  - name: Merchant:BuyCostMod
+    value: "0.4" # was 0.9499999880791
+    ruleset_id: 1
+    notes: Modifier for NPC buy price
+  - name: Merchant:SellCostMod
+    value: "4.0" # was 1.0499999523163
+    ruleset_id: 1
+    notes: Modifier for NPC sell price
+  - name: Merchant:ChaBonusMod
+    value: "2.7500000476837" # was 3.4500000476837
+    ruleset_id: 1
+    notes: Determines CHA cap, from 104 CHA. 3.45 is 132 CHA at apprehensive. 0.34 is
+      400 CHA at apprehensive
+  - name: Merchant:ChaPenaltyMod
+    value: "0.6199999809265" # was 1.5199999809265
+    ruleset_id: 1
+    notes: Determines CHA bottom, up to 102 CHA. 1.52 is 37 CHA at apprehensive. 0.98
+      is 0 CHA at apprehensive
+  - name: NPC:LiveLikeEnrage
+    value: "true" # was false
+    ruleset_id: 1
+    notes: If set to true then only player controlled pets will enrage
+  - name: NPC:NPCGatePercent
+    value: "0" # was 20
+    ruleset_id: 1
+    notes: ' Percentage at which the NPC Will attempt to gate at'
+  - name: NPC:StartEnrageValue
+    value: "0" # was 9
+    ruleset_id: 1
+    notes: 'Percentage HP that an NPC will begin to enrage'
+  - name: Range:Anims
+    value: "450" # was 135
+    ruleset_id: 1
+    notes: The packet range in which begin cast messages are sent
+  - name: Range:BeginCast
+    value: "450" # was 200
+    ruleset_id: 1
+    notes: The packet range in which begin cast messages are sent
+  - name: Range:ClientPositionUpdates
+    value: "450" # was 300
+    ruleset_id: 1
+    notes: Distance in which the own changed position is communicated to other clients
+  - name: Range:DamageMessages
+    value: "450" # was 50
+    ruleset_id: 1
+    notes: The packet range in which damage messages are sent (non-crit)
+  - name: Range:SpellMessages
+    value: "450" # was 75
+    ruleset_id: 1
+    notes: The packet range in which spell damage messages are sent
+  - name: Skills:MaxTrainTradeskills
+    value: "150" # was 21
+    ruleset_id: 1
+    notes: Highest level for trading skills that can be learnt by the trainer
+  - name: Spells:AllowSpellMemorizeFromItem
+    value: "true" # was false
+    ruleset_id: 1
+    notes: Allows players to memorize spells by right-clicking spell scrolls
+  - name: Spells:AlwaysSendTargetsBuffs
+    value: "true" # was false
+    ruleset_id: 1
+    notes: Ignore Leadership Alternate Abilities level if true
+  - name: Spells:AOEMaxTargets
+    value: "5" # was 0
+    ruleset_id: 1
+    notes: Max number of targets a Targeted AOE spell can cast on. Set to 0 for no limit.
+  - name: Spells:PreNerfBardAEDoT
+    value: "true" # was false
+    ruleset_id: 1
+    notes: Allow bard AOE dots to damage targets when moving
+  - name: World:EnableTutorialButton
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Setting whether the Tutorial button should be active. At least in RoF2 you
+      can always press the button, but it loses its effect
+  - name: World:MinOfflineTimeToReturnHome
+    value: "300" # was 21600
+    ruleset_id: 1
+    notes: Minimum offline time to activate the Return Home button. 21600 seconds is
+      6 Hours
+  - name: Zone:ClientLinkdeadMS
+    value: "30000" # was 60000
+    ruleset_id: 1
+    notes: The time a client remains link dead on the server after a sudden disconnection
+      (milliseconds)
+  - name: Zone:EnableLoggedOffReplenishments
+    value: "false" # was true
+    ruleset_id: 1
+    notes: 'Replenish mana/hp/end if logged off for MinOfflineTimeToReplenishments'
+  - name: Zone:GlobalLootMultiplier
+    value: "1" # was 1
+    ruleset_id: 1
+    notes: Sets Global Loot drop multiplier for database based drops, useful for double,
+      triple loot etc
+  - name: Zone:HotZoneBonus
+    value: "0.7500000000000" # was 0.7500000000000
+    ruleset_id: 1
+    notes: Value which is added to the experience multiplier. This also applies to AA
+      experience.
+  - name: NPC:LastFightingDelayMovingMax
+    value: "10000" # was 30000
+    ruleset_id: 1
+    notes: Maximum time before mob goes home after all aggro loss (milliseconds)
+  - name: Combat:EXPFromDmgShield
+    value: "true"
+    ruleset_id: 1
+    notes: Determine if damage from a damage shield counts for experience gain
+  - name: Combat:ArcheryBonusRequiresStationary
+    value: "false" # was true
+    ruleset_id: 1
+    notes: does the 2x archery bonus chance require a stationary npc
+  - name: Character:UnmemSpellsOnDeath
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Setting whether at death all memorized Spells are forgotten
+  - name: Character:SkillUpFromItems
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Allow Skill ups from clickable items
+  - name: Character:ShowExpValues
+    value: "2"  # was 0
+    ruleset_id: 1
+    notes: Show experience values. 0=normal, 1=show raw experience values, 2=show raw
+      experience values and percent
+  - name: Character:MaxExpLevel
+    value: "60" # was 70
+    ruleset_id: 1
+    notes: Defines the maximum level that can be reached through experience
+  - name: Character:FullManaOnDeath
+    value: "false" # was true
+    ruleset_id: 1
+    notes: On death set mana to full
+  - name: Character:FullEndurOnDeath
+    value: "false" # was true
+    ruleset_id: 1
+    notes: On death set endurance to full
+  - name: Character:FinalExpMultiplier
+    value: "0.5" # was 1
+    ruleset_id: 1
+    notes: Added on top of everything else, easy for setting EXP events
+  - name: Character:ExperiencePercentCapPerKill
+    value: "10" # was -1
+    ruleset_id: 1
+    notes: Caps the percentage of experience that can be gained per kill. -1 disables
+      the cap; 0 blocks all (non-aa) xp.
+  - name: Character:EnvironmentDamageMulipliter
+    value: "0.8000000000000" # was 1.0000000000000
+    ruleset_id: 1
+    notes: Multiplier for environmental damage like fall damage.
+  - name: Character:EnduranceRegenMultiplier
+    value: "120" # was 100
+    ruleset_id: 1
+    notes: The endurance regeneration is multiplied by value/100 (up to the caps)
+  - name: Character:EnableXTargetting
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Enable Extended Targeting Window, for users with UF and later clients
+  - name: Character:EnableAggroMeter
+    value: "false" # was true
+    ruleset_id: 1
+    notes: Enable Aggro Meter, for users with RoF and later clients
+  - name: Character:DragCorpseDistance
+    value: "700.0000000000000" # was 400.0000000000000
+    ruleset_id: 1
+    notes: If a player is using /corpsedrag and moving, the corpse will not move until
+      the player exceeds this distance
+  - name: Character:DeathItemLossLevel
+    value: "1" # was 10
+    ruleset_id: 1
+    notes: From this level on, items are left in the corpse when LeaveCorpses is activated
+  - name: Character:DeathExpLossMultiplier
+    value: "1" # was 3
+    ruleset_id: 1
+    notes: Adjust how much experience is lost. Default 3.5% (0=0.5%, 1=1.5%, 2=2.5%,
+      3=3.5%, 4=4.5%, 5=5.5%, 6=6.5%, 7=7.5%, 8=8.5%, 9=9.5%, 10=11%)
