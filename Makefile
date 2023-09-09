@@ -1,12 +1,12 @@
 NAME := yakuku
 SHELL := /bin/bash
-VERSION ?= 0.0.1
+VERSION ?= 0.0.2
 
-# runs program
-run:
+	
+run-%:
 	make build
 	mkdir -p bin/out
-	cd bin && ./${NAME} sql rule rule.yaml out/rule.sql
+	cd bin && ./${NAME} sql $* $*.yaml out/$*.sql
 # compilies the project to bin/
 build:
 	mkdir -p bin
