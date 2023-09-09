@@ -2,7 +2,6 @@ NAME := yakuku
 SHELL := /bin/bash
 VERSION ?= 0.0.2
 
-	
 run-%:
 	make build
 	mkdir -p bin/out
@@ -35,3 +34,5 @@ inject: copy-data
 # CICD triggers this
 set-version-%:
 	@echo "VERSION=${VERSION}.$*" >> $$GITHUB_ENV
+
+	

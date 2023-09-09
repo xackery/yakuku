@@ -136,6 +136,11 @@ func inject(args []string) error {
 		if err != nil {
 			return fmt.Errorf("rule: %w", err)
 		}
+	case "charcreate":
+		err = charcreate.Inject(path)
+		if err != nil {
+			return fmt.Errorf("charcreate: %w", err)
+		}
 	default:
 		fmt.Println("Unknown command:", cmd)
 		fmt.Println("Usage: yakuku inject [rule|spell|aa|task|charcreate]")
