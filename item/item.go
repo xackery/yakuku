@@ -402,6 +402,8 @@ func (e *ItemYaml) sanitize() error {
 			}
 
 		}
+		item.Verified = sql.NullTime{}
+		item.Serialized = sql.NullTime{}
 	}
 	return nil
 }
