@@ -12,10 +12,10 @@ import (
 
 func Sql(srcYaml, dstSql string) error {
 	start := time.Now()
-	fmt.Printf("Rule...")
+	fmt.Printf("Rule... ")
 	var err error
 	defer func() {
-		fmt.Println(" finished in", time.Since(start).String())
+		fmt.Println("finished in", time.Since(start).String())
 		if err != nil {
 			fmt.Println("Error:", err)
 			os.Exit(1)
@@ -62,5 +62,6 @@ func generateRuleSQL(sp *RuleYaml, dstSql string) error {
 	for _, rule := range sp.Rules {
 		w.WriteString(fmt.Sprintf("UPDATE `rule_values` SET rule_value = '%s' WHERE rule_name = '%s';\n", rule.Value, rule.Name))
 	}
+	fmt.Printf("%d rules ", len(sp.Rules))
 	return nil
 }

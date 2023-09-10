@@ -7,6 +7,7 @@ import (
 
 	"github.com/xackery/yakuku/charcreate"
 	sqlinject "github.com/xackery/yakuku/inject"
+	"github.com/xackery/yakuku/item"
 	"github.com/xackery/yakuku/rule"
 )
 
@@ -51,7 +52,7 @@ func run() error {
 func yaml(args []string) error {
 	var err error
 	if len(args) < 2 {
-		fmt.Println("Usage: yakuku yaml [rule|spell|aa|task|charcreate] [out_path] [filters]")
+		fmt.Println("Usage: yakuku yaml [rule|charcreate|item] [out_path] [filters]")
 		fmt.Println("This command will a yaml dump based on the original database")
 		os.Exit(1)
 	}
@@ -82,6 +83,11 @@ func yaml(args []string) error {
 		if err != nil {
 			return fmt.Errorf("rule: %w", err)
 		}
+	case "item":
+		err = item.Yaml(path, filters)
+		if err != nil {
+			return fmt.Errorf("item: %w", err)
+		}
 	default:
 		fmt.Println("Unknown command:", cmd)
 		fmt.Println("Usage: yakuku yaml [rule|spell|aa|task|charcreate]")
@@ -93,7 +99,7 @@ func yaml(args []string) error {
 func sql(args []string) error {
 	var err error
 	if len(args) < 3 {
-		fmt.Println("Usage: yakuku sql [rule|charcreate] [src.yaml] [dst.sql]")
+		fmt.Println("Usage: yakuku sql [rule|charcreate|item] [src.yaml] [dst.sql]")
 		fmt.Println("This command will generate sql based on the yaml dump")
 		os.Exit(1)
 	}
@@ -112,6 +118,11 @@ func sql(args []string) error {
 		err = charcreate.Sql(srcYaml, dstSql)
 		if err != nil {
 			return fmt.Errorf("charcreate: %w", err)
+		}
+	case "item":
+		err = item.Sql(srcYaml, dstSql)
+		if err != nil {
+			return fmt.Errorf("item: %w", err)
 		}
 	default:
 		fmt.Println("Unknown command:", cmd)
