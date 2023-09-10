@@ -25,25 +25,14 @@ func main() {
 }
 
 func run() error {
-	fmt.Println("Yakuku v" + Version)
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: yakuku [yaml|sql|inject]")
 		os.Exit(1)
 	}
 
-	_, err := os.Stat("dbstr_us_original.txt")
-	if err != nil {
-		fmt.Println("Please copy dbstr_us.txt into this path, and rename it to dbstr_us_original.txt")
-		os.Exit(1)
-	}
-
-	_, err = os.Stat("spells_us_original.txt")
-	if err != nil {
-		fmt.Println("Please copy spells_us.txt into this path, and rename it to spells_us_original.txt")
-		os.Exit(1)
-	}
-
 	switch strings.ToLower(os.Args[1]) {
+	case "version":
+		fmt.Println("Yakuku v" + Version)
 	case "yaml":
 		return yaml(os.Args[2:])
 	case "sql":
@@ -64,6 +53,18 @@ func yaml(args []string) error {
 	if len(args) < 2 {
 		fmt.Println("Usage: yakuku yaml [rule|spell|aa|task|charcreate] [out_path] [filters]")
 		fmt.Println("This command will a yaml dump based on the original database")
+		os.Exit(1)
+	}
+
+	_, err = os.Stat("dbstr_us_original.txt")
+	if err != nil {
+		fmt.Println("Please copy dbstr_us.txt into this path, and rename it to dbstr_us_original.txt")
+		os.Exit(1)
+	}
+
+	_, err = os.Stat("spells_us_original.txt")
+	if err != nil {
+		fmt.Println("Please copy spells_us.txt into this path, and rename it to spells_us_original.txt")
 		os.Exit(1)
 	}
 
