@@ -142,7 +142,7 @@ func inject(args []string) error {
 
 	err = sqlinject.Inject(args[0])
 	if err != nil {
-		return fmt.Errorf("inject: %w", err)
+		return fmt.Errorf("inject %s: %w", args[0], err)
 	}
 
 	return nil

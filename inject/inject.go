@@ -3,6 +3,8 @@ package inject
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/xackery/yakuku/config"
@@ -26,16 +28,41 @@ func Inject(sqlFile string) error {
 		return fmt.Errorf("read file: %w", err)
 	}
 
-	result, err := db.Exec(string(data))
-	if err != nil {
-		return fmt.Errorf("exec: %w", err)
+	inserts := strings.Split(string(data), ";")
+
+	totalRows := 0
+	for _, insert := range inserts {
+		result, err := db.Exec(insert)
+		if err != nil {
+			if strings.Contains(err.Error(), "at row") {
+				row := strings.Split(err.Error(), "at row")
+				if len(row) < 2 {
+					return fmt.Errorf("exec split: %w", err)
+				}
+				rowNumber := strings.TrimSpace(row[1])
+
+				rowNum, err := strconv.Atoi(rowNumber)
+				if err != nil {
+					return fmt.Errorf("exec atoi: %w", err)
+				}
+
+				records := strings.Split(insert, "\n")
+				if len(records) < rowNum {
+					return fmt.Errorf("exec len: %w", err)
+				}
+
+				fmt.Printf("Query line %d: %s\n", rowNum, records[rowNum-1])
+			}
+			return fmt.Errorf("exec: %w", err)
+		}
+
+		rows, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Errorf("rows affected: %w", err)
+		}
+		totalRows += int(rows)
 	}
 
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-
-	fmt.Printf("Injected %d rows\n", rows)
+	fmt.Printf("Injected %d rows\n", totalRows)
 	return nil
 }
