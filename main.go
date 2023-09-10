@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/xackery/yakuku/charcreate"
+	sqlinject "github.com/xackery/yakuku/inject"
 	"github.com/xackery/yakuku/rule"
 )
 
@@ -121,30 +122,16 @@ func sql(args []string) error {
 
 func inject(args []string) error {
 	var err error
-	if len(args) < 2 {
+	if len(args) < 1 {
 		fmt.Println("Usage: yakuku inject [sql_path]")
 		fmt.Println("This command will inject sql into the target database")
 		os.Exit(1)
 	}
 
-	cmd := strings.ToLower(args[0])
-	path := args[1]
-
-	switch cmd {
-	case "rule":
-		err = rule.Inject(path)
-		if err != nil {
-			return fmt.Errorf("rule: %w", err)
-		}
-	case "charcreate":
-		err = charcreate.Inject(path)
-		if err != nil {
-			return fmt.Errorf("charcreate: %w", err)
-		}
-	default:
-		fmt.Println("Unknown command:", cmd)
-		fmt.Println("Usage: yakuku inject [rule|spell|aa|task|charcreate]")
-		os.Exit(1)
+	err = sqlinject.Inject(args[0])
+	if err != nil {
+		return fmt.Errorf("inject: %w", err)
 	}
+
 	return nil
 }
