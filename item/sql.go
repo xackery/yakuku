@@ -88,7 +88,7 @@ func generateItemSQL(sp *ItemYaml, dstSql string) error {
 					if field.Tag("db") == "updated" {
 						w.WriteString(fmt.Sprintf("`%s` = NOW()", field.Tag("db")))
 					} else {
-						w.WriteString(fmt.Sprintf("`%s` = DATETIME('%s')", field.Tag("db"), val.Format("2006-01-02 15:04:05")))
+						w.WriteString(fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05")))
 					}
 				case sql.NullString:
 					if val.Valid {
@@ -98,7 +98,7 @@ func generateItemSQL(sp *ItemYaml, dstSql string) error {
 					}
 				case sql.NullTime:
 					if val.Valid {
-						w.WriteString(fmt.Sprintf("`%s` = DATETIME('%s')", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05")))
+						w.WriteString(fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05")))
 					} else {
 						w.WriteString(fmt.Sprintf("`%s` = NULL", field.Tag("db")))
 					}
