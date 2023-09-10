@@ -14,7 +14,7 @@ import (
 )
 
 // Yaml takes database info and dumps to yaml
-func Yaml(yamlFile string, filers []string) error {
+func Yaml(yamlFile string, filters []string) error {
 	cfg, err := config.Load()
 	if err != nil {
 		return fmt.Errorf("config load: %w", err)
@@ -28,7 +28,7 @@ func Yaml(yamlFile string, filers []string) error {
 
 	items := &ItemYaml{}
 
-	for _, filter := range filers {
+	for _, filter := range filters {
 		id, err := strconv.Atoi(filter)
 		if err != nil {
 			return fmt.Errorf("invalid id %s: %w", filter, err)
@@ -53,7 +53,7 @@ func Yaml(yamlFile string, filers []string) error {
 		return err
 	}
 
-	fmt.Println("Items", strings.Join(filers, ", "), "exported to", yamlFile)
+	fmt.Println("Items", strings.Join(filters, ", "), "exported to", yamlFile)
 	return nil
 }
 

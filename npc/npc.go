@@ -143,6 +143,8 @@ type Npc struct {
 
 // Spawn is SpawnEntry
 type Spawn struct {
+	Id                   int            `yaml:"id,omitempty" db:"id"`                                         // int(11) NOT NULL AUTO_INCREMENT,
+	Name                 string         `yaml:"name,omitempty" db:"name"`                                     // varchar(50) NOT NULL DEFAULT '',
 	SpawngroupID         int            `yaml:"spawngroupID,omitempty" db:"spawngroupID"`                     // int(11) NOT NULL DEFAULT 0,
 	NpcID                int            `yaml:"npcID,omitempty" db:"npcID"`                                   // int(11) NOT NULL DEFAULT 0,
 	Chance               int            `yaml:"chance,omitempty" db:"chance"`                                 // smallint(4) NOT NULL DEFAULT 0,
@@ -151,8 +153,6 @@ type Spawn struct {
 	MaxExpansion         int            `yaml:"max_expansion,omitempty" db:"max_expansion"`                   // tinyint(4) NOT NULL DEFAULT -1,
 	ContentFlags         sql.NullString `yaml:"content_flags,omitempty" db:"content_flags"`                   // varchar(100) DEFAULT NULL,
 	ContentFlagsDisabled sql.NullString `yaml:"content_flags_disabled,omitempty" db:"content_flags_disabled"` // varchar(100) DEFAULT NULL,
-	Id                   int            `yaml:"id,omitempty" db:"id"`                                         // int(11) NOT NULL AUTO_INCREMENT,
-	Name                 string         `yaml:"name,omitempty" db:"name"`                                     // varchar(50) NOT NULL DEFAULT '',
 	SpawnLimit           int            `yaml:"spawn_limit,omitempty" db:"spawn_limit"`                       // tinyint(4) NOT NULL DEFAULT 0,
 	Dist                 float32        `yaml:"dist,omitempty" db:"dist"`                                     // float NOT NULL DEFAULT 0,
 	MaxX                 float32        `yaml:"max_x,omitempty" db:"max_x"`                                   // float NOT NULL DEFAULT 0,

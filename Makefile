@@ -1,6 +1,6 @@
 NAME := yakuku
 SHELL := /bin/bash
-VERSION ?= 0.0.3
+VERSION ?= 0.0.4
 
 run-sql-%:
 	make build
@@ -15,7 +15,8 @@ run-inject-%:
 run-yaml-%:
 	make build
 	mkdir -p bin/out
-	cd bin && ./${NAME} yaml $* $*.yaml 9979 9990 9991 32601 32601
+	@#cd bin && ./${NAME} yaml $* $*.yaml 9979 9990 9991 32601 32601
+	cd bin && ./${NAME} yaml $* $*.yaml 56
 
 # compilies the project to bin/
 build:
