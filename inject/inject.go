@@ -67,6 +67,6 @@ func Inject(sqlFile string) error {
 		totalRows += int(rows)
 	}
 
-	fmt.Printf("Injected %d rows\n", totalRows)
+	fmt.Printf("Injected %s: %d rows\n", sqlFile, totalRows)
 	return nil
 }

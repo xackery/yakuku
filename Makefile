@@ -24,9 +24,9 @@ build:
 # runs all build commands
 build-all: build-linux build-windows
 build-linux:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${NAME} main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${NAME} -ldflags="-X main.Version=${VERSION} -s -w" main.go
 build-windows:
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${NAME}.exe main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${NAME}.exe -ldflags="-X main.Version=${VERSION} -s -w" main.go
 dump-item-%:
 	cd bin && ./${NAME} import item $*
 show-tables: copy-data
