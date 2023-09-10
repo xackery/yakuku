@@ -65,28 +65,27 @@ func generateCharCreateSQL(sp *CharCreateYaml, dstSql string) error {
 
 	w.WriteString("REPLACE INTO `char_create_combinations` (`allocation_id`, `race`, `class`, `deity`, `start_zone`, `expansions_req`) VALUES\n")
 
-	for charCreateIndex, charCreate := range sp.CharCreates {
+	buf := ""
+	for _, charCreate := range sp.CharCreates {
 		for _, class := range charCreate.Classes {
 			for _, deity := range class.Deities {
 				for _, zone := range deity.Zones {
-					w.WriteString(fmt.Sprintf("(%d, %d, %d, %d, %d, %d",
+					buf += fmt.Sprintf("(%d, %d, %d, %d, %d, %d",
 						zone.AllocationID,
 						util.RaceNameToID(charCreate.Race),
 						util.ClassNameToID(class.Class),
 						util.DeityNameToID(deity.Deity),
 						util.ZoneNameToID(zone.Zone),
-						zone.ExpansionsReq))
+						zone.ExpansionsReq)
 
-					//w.WriteString(fmt.Sprintf("%d, ", util.RaceNameToID(charCreate.Race)))
-					if charCreateIndex == len(sp.CharCreates)-1 {
-						w.WriteString(");\n")
-					} else {
-						w.WriteString("),\n")
-					}
+					buf += "),\n"
 				}
 			}
 		}
 	}
+	buf = buf[:len(buf)-2]
+	buf += ";\n"
+	w.WriteString(buf)
 
 	w.WriteString("\n\n")
 
