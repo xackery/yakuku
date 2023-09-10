@@ -32,6 +32,10 @@ func Inject(sqlFile string) error {
 
 	totalRows := 0
 	for _, insert := range inserts {
+		insert = strings.TrimSpace(insert)
+		if insert == "" {
+			continue
+		}
 		result, err := db.Exec(insert)
 		if err != nil {
 			if strings.Contains(err.Error(), "at row") {
