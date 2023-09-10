@@ -72,17 +72,18 @@ func generateItemSQL(sp *ItemYaml, dstSql string) error {
 				continue
 			}
 			fieldBuf := util.FieldParse(field)
-			if fieldBuf == "" {
+			if fieldBuf != "" {
 				buf += fieldBuf + ", "
 				continue
 			}
-			return fmt.Errorf("unknown field type: %s", field.Kind().String())
+			return fmt.Errorf("unknown field type for field %s: %s", field.Tag("db"), field.Kind().String())
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"
-		w.WriteString(buf)
 		itemCount++
 	}
+
+	w.WriteString(buf)
 	fmt.Printf(" %d items ", itemCount)
 
 	return nil
