@@ -1,14 +1,13 @@
 package item
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
-	"reflect"
 	"time"
 
 	"github.com/fatih/structs"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/xackery/yakuku/util"
 
 	"gopkg.in/yaml.v3"
 )
@@ -63,58 +62,25 @@ func generateItemSQL(sp *ItemYaml, dstSql string) error {
 
 	itemCount := 0
 
+	buf := ""
 	for _, item := range sp.Items {
 		fields := structs.Fields(item)
 
-		w.WriteString("REPLACE INTO `items` SET ")
-		for fieldIndex, field := range fields {
+		buf += "REPLACE INTO `items` SET "
+		for _, field := range fields {
 			if !field.IsExported() {
 				continue
 			}
-			switch field.Kind() {
-			case reflect.String:
-				w.WriteString(fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value()))
-			case reflect.Int:
-				w.WriteString(fmt.Sprintf("`%s` = %d", field.Tag("db"), field.Value()))
-			case reflect.Float64:
-				w.WriteString(fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value()))
-			case reflect.Float32:
-				w.WriteString(fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value()))
-			case reflect.Bool:
-				w.WriteString(fmt.Sprintf("`%s` = %t", field.Tag("db"), field.Value()))
-			case reflect.Struct:
-				switch val := field.Value().(type) {
-				case time.Time:
-					if field.Tag("db") == "updated" {
-						w.WriteString(fmt.Sprintf("`%s` = NOW()", field.Tag("db")))
-					} else {
-						w.WriteString(fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05")))
-					}
-				case sql.NullString:
-					if val.Valid {
-						w.WriteString(fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value()))
-					} else {
-						w.WriteString(fmt.Sprintf("`%s` = NULL", field.Tag("db")))
-					}
-				case sql.NullTime:
-					if val.Valid {
-						w.WriteString(fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05")))
-					} else {
-						w.WriteString(fmt.Sprintf("`%s` = NULL", field.Tag("db")))
-					}
-				default:
-					return fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
-				}
-			default:
-				return fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
+			fieldBuf := util.FieldParse(field)
+			if fieldBuf == "" {
+				buf += fieldBuf + ", "
+				continue
 			}
-			if fieldIndex == len(fields)-1 {
-				w.WriteString(";\n")
-			} else {
-				w.WriteString(", ")
-			}
+			return fmt.Errorf("unknown field type: %s", field.Kind().String())
 		}
-		//w.WriteString(fmt.Sprintf(" WHERE id = %d;\n", item.ID))
+		buf = buf[:len(buf)-2]
+		buf += ";\n"
+		w.WriteString(buf)
 		itemCount++
 	}
 	fmt.Printf(" %d items ", itemCount)

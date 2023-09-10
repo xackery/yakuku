@@ -1,7 +1,6 @@
 package npc
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 	"reflect"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/fatih/structs"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/xackery/yakuku/util"
 
 	"gopkg.in/yaml.v3"
 )
@@ -75,40 +75,14 @@ func generateNpcSQL(sp *NpcYaml, dstSql string) error {
 			if !field.IsExported() {
 				continue
 			}
+
+			fieldBuf := util.FieldParse(field)
+			if fieldBuf != "" {
+				buf += fieldBuf + ", "
+				continue
+			}
+
 			switch field.Kind() {
-			case reflect.String:
-				buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value())
-			case reflect.Int:
-				buf += fmt.Sprintf("`%s` = %d", field.Tag("db"), field.Value())
-			case reflect.Float64:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Float32:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Bool:
-				buf += fmt.Sprintf("`%s` = %t", field.Tag("db"), field.Value())
-			case reflect.Struct:
-				switch val := field.Value().(type) {
-				case time.Time:
-					if field.Tag("db") == "updated" {
-						buf += fmt.Sprintf("`%s` = NOW()", field.Tag("db"))
-					} else {
-						buf += fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05"))
-					}
-				case sql.NullString:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), val.String)
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				case sql.NullTime:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05"))
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				default:
-					return fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
-				}
 			case reflect.Slice:
 				// assert type
 				switch v := field.Value().(type) {
@@ -133,7 +107,6 @@ func generateNpcSQL(sp *NpcYaml, dstSql string) error {
 			default:
 				return fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
 			}
-			buf += ", "
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"
@@ -200,44 +173,13 @@ func generateSpawnEntrySQL(spawns []*Spawn) (string, error) {
 				continue
 			}
 
-			switch field.Kind() {
-			case reflect.String:
-				buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value())
-			case reflect.Int:
-				buf += fmt.Sprintf("`%s` = %d", field.Tag("db"), field.Value())
-			case reflect.Float64:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Float32:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Bool:
-				buf += fmt.Sprintf("`%s` = %t", field.Tag("db"), field.Value())
-			case reflect.Struct:
-				switch val := field.Value().(type) {
-				case time.Time:
-					if field.Tag("db") == "updated" {
-						buf += fmt.Sprintf("`%s` = NOW()", field.Tag("db"))
-					} else {
-						buf += fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05"))
-					}
-				case sql.NullString:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), val.String)
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				case sql.NullTime:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05"))
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				default:
-					return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
-				}
-			default:
-				return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
+			fieldBuf := util.FieldParse(field)
+			if fieldBuf != "" {
+				buf += fieldBuf + ", "
+				continue
 			}
-			buf += ", "
+
+			return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"
@@ -274,7 +216,7 @@ func generateSpawn2SQL(spawns []*Spawn2) (string, error) {
 	for _, spawn := range spawns {
 		fields := structs.Fields(spawn)
 
-		buf += fmt.Sprintf("REPLACE INTO `spawn2` SET ")
+		buf += "REPLACE INTO `spawn2` SET "
 		for _, field := range fields {
 			if !field.IsExported() {
 				continue
@@ -293,45 +235,12 @@ func generateSpawn2SQL(spawns []*Spawn2) (string, error) {
 			if !isSpawn2 {
 				continue
 			}
-
-			switch field.Kind() {
-			case reflect.String:
-				buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value())
-			case reflect.Int:
-				buf += fmt.Sprintf("`%s` = %d", field.Tag("db"), field.Value())
-			case reflect.Float64:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Float32:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Bool:
-				buf += fmt.Sprintf("`%s` = %t", field.Tag("db"), field.Value())
-			case reflect.Struct:
-				switch val := field.Value().(type) {
-				case time.Time:
-					if field.Tag("db") == "updated" {
-						buf += fmt.Sprintf("`%s` = NOW()", field.Tag("db"))
-					} else {
-						buf += fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05"))
-					}
-				case sql.NullString:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), val.String)
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				case sql.NullTime:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05"))
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				default:
-					return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
-				}
-			default:
-				return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
+			fieldBuf := util.FieldParse(field)
+			if fieldBuf != "" {
+				buf += fieldBuf + ", "
+				continue
 			}
-			buf += ", "
+			return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"
@@ -361,7 +270,7 @@ func generateSpawnGroupSQL(spawns []*Spawn) (string, error) {
 	for _, spawn := range spawns {
 		fields := structs.Fields(spawn)
 
-		buf += fmt.Sprintf("REPLACE INTO `spawngroup` SET ")
+		buf += "REPLACE INTO `spawngroup` SET "
 		for _, field := range fields {
 			if !field.IsExported() {
 				continue
@@ -380,45 +289,12 @@ func generateSpawnGroupSQL(spawns []*Spawn) (string, error) {
 			if !isSpawn2 {
 				continue
 			}
-
-			switch field.Kind() {
-			case reflect.String:
-				buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value())
-			case reflect.Int:
-				buf += fmt.Sprintf("`%s` = %d", field.Tag("db"), field.Value())
-			case reflect.Float64:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Float32:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Bool:
-				buf += fmt.Sprintf("`%s` = %t", field.Tag("db"), field.Value())
-			case reflect.Struct:
-				switch val := field.Value().(type) {
-				case time.Time:
-					if field.Tag("db") == "updated" {
-						buf += fmt.Sprintf("`%s` = NOW()", field.Tag("db"))
-					} else {
-						buf += fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05"))
-					}
-				case sql.NullString:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), val.String)
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				case sql.NullTime:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05"))
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				default:
-					return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
-				}
-			default:
-				return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
+			fieldBuf := util.FieldParse(field)
+			if fieldBuf != "" {
+				buf += fieldBuf + ", "
+				continue
 			}
-			buf += ", "
+			return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"
