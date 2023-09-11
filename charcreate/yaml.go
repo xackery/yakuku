@@ -227,6 +227,7 @@ func Yaml(yamlFile string, filters []string) error {
 	defer w.Close()
 
 	enc := yaml.NewEncoder(w)
+	enc.SetIndent(2)
 	err = enc.Encode(charCreate)
 	if err != nil {
 		return err

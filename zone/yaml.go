@@ -51,6 +51,7 @@ func Yaml(path string, filters []string) error {
 	defer w.Close()
 
 	enc := yaml.NewEncoder(w)
+	enc.SetIndent(2)
 	err = enc.Encode(zones)
 	if err != nil {
 		return err

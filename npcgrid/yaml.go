@@ -1,4 +1,4 @@
-package npc
+package npcgrid
 
 import (
 	"context"
@@ -29,6 +29,10 @@ func Yaml(path string, filters []string) error {
 
 	zones := &NpcYaml{}
 
+	if len(filters) > 1 {
+		return fmt.Errorf("only one filter is supported")
+	}
+
 	for _, filter := range filters {
 		id, err := strconv.Atoi(filter)
 		if err != nil {
@@ -41,8 +45,11 @@ func Yaml(path string, filters []string) error {
 		if result == nil {
 			continue
 		}
+		zones.ZoneID = result.ZoneID
+		zones.ZoneShortName = result.ZoneShortName
 
-		zones.Npcs = append(zones.Npcs, result.Npcs...)
+		zones.Spawn2 = append(zones.Spawn2, result.Spawn2...)
+		zones.Grids = append(zones.Grids, result.Grids...)
 	}
 
 	w, err := os.Create(path)
@@ -68,83 +75,70 @@ func importZone(db *sqlx.DB, id int) (*NpcYaml, error) {
 	if zoneName == "unknown" {
 		return nil, fmt.Errorf("unknown zone id %d", id)
 	}
-	npc := &NpcYaml{}
+	npc := &NpcYaml{
+		ZoneShortName: zoneName,
+		ZoneID:        id,
+	}
 	npc.sanitize()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	rows, err := db.QueryxContext(ctx, "SELECT npc_types.* FROM npc_types where id < ? and id > ?", (id*1000)+1000, (id*1000)-1)
+	rows, err := db.QueryxContext(ctx, "SELECT id, spawngroupid, zone, x, y, z, heading, pathgrid FROM spawn2 where zone = ?", zoneName)
 	if err != nil {
 		return nil, fmt.Errorf("db query: %w", err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		r := Npc{}
+		r := Spawn2{}
 		err = rows.StructScan(&r)
 		if err != nil {
 			return nil, fmt.Errorf("db struct scan: %w", err)
 		}
-
-		npc.Npcs = append(npc.Npcs, &r)
+		r.Zone = ""
+		npc.Spawn2 = append(npc.Spawn2, &r)
 	}
 
-	err = importSpawns(db, id, npc)
-	if err != nil {
-		return nil, fmt.Errorf("import spawns: %w", err)
-	}
-
-	rows2, err := db.QueryxContext(ctx, "SELECT * from spawn2 WHERE zone = ?", zoneName)
+	rows2, err := db.QueryxContext(ctx, "SELECT * from grid WHERE zoneid = ?", id)
 	if err != nil {
 		return nil, fmt.Errorf("db query spawn2: %w", err)
 	}
 
 	for rows2.Next() {
-		r := Spawn2{}
+		r := PathGrid{}
 		err = rows2.StructScan(&r)
 		if err != nil {
 			return nil, fmt.Errorf("db struct scan spawn2: %w", err)
 		}
-		npc.Spawn2 = append(npc.Spawn2, &r)
+		r.Zoneid = 0
+		npc.Grids = append(npc.Grids, &r)
 	}
 
-	if len(npc.Npcs) == 0 {
-		fmt.Printf("%s (%d) has 0 npcs ", zoneName, id)
-		return nil, nil
-	}
-	fmt.Printf("%s (%d) has %d npcs\n", zoneName, id, len(npc.Npcs))
-	return npc, nil
-}
+	gridEntryTotal := 0
 
-func importSpawns(db *sqlx.DB, zoneID int, npc *NpcYaml) error {
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	rows, err := db.QueryxContext(ctx, "SELECT * FROM spawnentry INNER JOIN spawngroup ON spawngroup.id = spawngroupid where npcID < ? and npcID > ?", (zoneID*1000)+1000, (zoneID*1000)-1)
+	rows3, err := db.QueryxContext(ctx, "SELECT * from grid_entries WHERE zoneid = ?", id)
 	if err != nil {
-		return fmt.Errorf("db query: %w", err)
+		return nil, fmt.Errorf("db query spawn2: %w", err)
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		r := Spawn{}
-		err = rows.StructScan(&r)
+	for rows3.Next() {
+		r := PathGridEntry{}
+		err = rows3.StructScan(&r)
 		if err != nil {
-			return fmt.Errorf("db struct scan: %w", err)
+			return nil, fmt.Errorf("db struct scan spawn2: %w", err)
 		}
-
-		for _, npc := range npc.Npcs {
-			if r.NpcID != npc.ID {
+		gridEntryTotal++
+		for _, grid := range npc.Grids {
+			if grid.Id != r.Gridid {
 				continue
 			}
-			if npc.Spawns == nil {
-				npc.Spawns = make([]*Spawn, 0)
-			}
-			r.NpcID = 0
-			r.Id = 0
-			npc.Spawns = append(npc.Spawns, &r)
-		}
+			r.Gridid = 0
+			r.Zoneid = 0
 
+			grid.Entries = append(grid.Entries, &r)
+		}
 	}
-	return nil
+
+	fmt.Printf("%s (%d) has %d spawn2, %d grids, %d entries\n", zoneName, id, len(npc.Spawn2), len(npc.Grids), gridEntryTotal)
+	return npc, nil
 }

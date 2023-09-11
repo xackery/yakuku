@@ -9,6 +9,7 @@ import (
 	sqlinject "github.com/xackery/yakuku/inject"
 	"github.com/xackery/yakuku/item"
 	"github.com/xackery/yakuku/npc"
+	"github.com/xackery/yakuku/npcgrid"
 	"github.com/xackery/yakuku/rule"
 	"github.com/xackery/yakuku/zone"
 )
@@ -54,7 +55,7 @@ func run() error {
 func yaml(args []string) error {
 	var err error
 	if len(args) < 2 {
-		fmt.Println("Usage: yakuku yaml [rule|charcreate|item|npc|zone] [out_path] [filters]")
+		fmt.Println("Usage: yakuku yaml [rule|charcreate|item|npc|zone|npcgrid] [out_path] [filters]")
 		fmt.Println("This command will a yaml dump based on the original database")
 		os.Exit(1)
 	}
@@ -95,6 +96,11 @@ func yaml(args []string) error {
 		if err != nil {
 			return fmt.Errorf("npc: %w", err)
 		}
+	case "npcgrid":
+		err = npcgrid.Yaml(path, filters)
+		if err != nil {
+			return fmt.Errorf("npcgrid: %w", err)
+		}
 	case "charcreate":
 		err = charcreate.Yaml(path, filters)
 		if err != nil {
@@ -116,7 +122,7 @@ func yaml(args []string) error {
 func sql(args []string) error {
 	var err error
 	if len(args) < 3 {
-		fmt.Println("Usage: yakuku sql [rule|charcreate|item|npc|zone] [src.yaml] [dst.sql]")
+		fmt.Println("Usage: yakuku sql [rule|charcreate|item|npc|npcgrid|zone] [src.yaml] [dst.sql]")
 		fmt.Println("This command will generate sql based on the yaml dump")
 		os.Exit(1)
 	}
@@ -145,6 +151,11 @@ func sql(args []string) error {
 		err = npc.Sql(srcYaml, dstSql)
 		if err != nil {
 			return fmt.Errorf("npc: %w", err)
+		}
+	case "npcgrid":
+		err = npcgrid.Sql(srcYaml, dstSql)
+		if err != nil {
+			return fmt.Errorf("npcgrid: %w", err)
 		}
 	case "zone":
 		err = zone.Sql(srcYaml, dstSql)

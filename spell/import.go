@@ -147,6 +147,7 @@ func importSpell(db *sqlx.DB, id int) error {
 
 	//err = node.Encode(w)
 	enc := yaml.NewEncoder(w)
+	enc.SetIndent(2)
 	err = enc.Encode(spell)
 	if err != nil {
 		return err

@@ -74,6 +74,7 @@ func Import(cmd *cobra.Command, args []string) error {
 	defer w.Close()
 
 	enc := yaml.NewEncoder(w)
+	enc.SetIndent(2)
 	err = enc.Encode(task)
 	if err != nil {
 		return err

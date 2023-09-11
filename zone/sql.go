@@ -102,9 +102,9 @@ func generateZoneSQL(sp *ZoneYaml, dstSql string) error {
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"
-		w.WriteString(buf)
 		zoneCount++
 	}
+	w.WriteString(buf)
 	w.WriteString("\n" + zonePointBuf)
 
 	fmt.Printf(" %d zones ", zoneCount)
