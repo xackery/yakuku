@@ -1,7 +1,6 @@
 package zone
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 	"reflect"
@@ -89,7 +88,7 @@ func generateZoneSQL(sp *ZoneYaml, dstSql string) error {
 					if len(v) == 0 {
 						continue
 					}
-					zonePoint, err := generateZonePointSQL(v)
+					zonePoint, err := generateZonePointSQL(v, zone.ShortName.String)
 					if err != nil {
 						return fmt.Errorf("generateZonePointSQL: %w", err)
 					}
@@ -111,56 +110,30 @@ func generateZoneSQL(sp *ZoneYaml, dstSql string) error {
 	return nil
 }
 
-func generateZonePointSQL(points []*ZonePoint) (string, error) {
+func generateZonePointSQL(points []*ZonePoint, zoneName string) (string, error) {
 	buf := ""
 
 	for _, point := range points {
 		fields := structs.Fields(point)
 
-		buf += fmt.Sprintf("REPLACE INTO `zone_points` SET ")
+		buf += "REPLACE INTO `zone_points` SET "
 		for _, field := range fields {
 			if !field.IsExported() {
 				continue
 			}
 
-			switch field.Kind() {
-			case reflect.String:
-				buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), field.Value())
-			case reflect.Int:
-				buf += fmt.Sprintf("`%s` = %d", field.Tag("db"), field.Value())
-			case reflect.Float64:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Float32:
-				buf += fmt.Sprintf("`%s` = %f", field.Tag("db"), field.Value())
-			case reflect.Bool:
-				buf += fmt.Sprintf("`%s` = %t", field.Tag("db"), field.Value())
-			case reflect.Struct:
-				switch val := field.Value().(type) {
-				case time.Time:
-					if field.Tag("db") == "updated" {
-						buf += fmt.Sprintf("`%s` = NOW()", field.Tag("db"))
-					} else {
-						buf += fmt.Sprintf("`%s` = CAST('%s' as DATETIME)", field.Tag("db"), val.Format("2006-01-02 15:04:05"))
-					}
-				case sql.NullString:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = '%s'", field.Tag("db"), val.String)
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				case sql.NullTime:
-					if val.Valid {
-						buf += fmt.Sprintf("`%s` = CAST('%s' AS DATETIME)", field.Tag("db"), val.Time.Format("2006-01-02 15:04:05"))
-					} else {
-						buf += fmt.Sprintf("`%s` = NULL", field.Tag("db"))
-					}
-				default:
-					return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
-				}
-			default:
-				return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
+			if field.Tag("db") == "zone" {
+				buf += fmt.Sprintf("`zone` = '%s', ", zoneName)
+				continue
 			}
-			buf += ", "
+
+			fieldBuf := util.FieldParse(field)
+			if fieldBuf != "" {
+				buf += fieldBuf + ", "
+				continue
+			}
+
+			return "", fmt.Errorf("unknown type %s %s", field.Tag("db"), field.Kind())
 		}
 		buf = buf[:len(buf)-2]
 		buf += ";\n"

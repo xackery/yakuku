@@ -96,6 +96,11 @@ func generateNpcSQL(sp *NpcYaml, dstSql string) error {
 				continue
 			}
 
+			if field.Tag("db") == "zoneid" {
+				buf += fmt.Sprintf("`zoneid` = '%d', ", sp.ZoneID)
+				continue
+			}
+
 			fieldBuf := util.FieldParse(field)
 			if fieldBuf != "" {
 				buf += fieldBuf + ", "
@@ -117,6 +122,11 @@ func generateNpcSQL(sp *NpcYaml, dstSql string) error {
 			buf += "REPLACE INTO `grid_entries` SET "
 			for _, field := range fields {
 				if !field.IsExported() {
+					continue
+				}
+
+				if field.Tag("db") == "zoneid" {
+					buf += fmt.Sprintf("`zoneid` = '%d', ", sp.ZoneID)
 					continue
 				}
 

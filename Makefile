@@ -1,6 +1,6 @@
 NAME := yakuku
 SHELL := /bin/bash
-VERSION ?= 0.0.8
+VERSION ?= 0.0.9
 
 run-sql-%:
 	make build
